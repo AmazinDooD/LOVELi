@@ -40,3 +40,6 @@ dofile("examples/controls.lua")
 
 -- Uncomment to see a simple Tic-Tac-Toe game example:
 --dofile("examples/tictactoe.lua")
+
+-- Uncomment to see a simple example:
+--dofile("examples/colors.lua")
