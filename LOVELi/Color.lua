@@ -75,8 +75,8 @@ function LOVELi.Color.parse(value) -- static
 		blue = (math.floor(value / 256) % 256) / 255 
 		alpha = (value % 256) / 255
 	elseif type(value) == "string" then
-    if value:sub(1, 1) == "#" then
-		value = value:sub(2)
+		if value:sub(1, 1) == "#" then
+			value = value:sub(2)
 			if #value == 3 then 
 				-- #RGB
 				value = value:sub(1, 1):rep(2) .. value:sub(2, 2):rep(2) .. value:sub(3, 3):rep(2) .. "FF"
@@ -89,10 +89,10 @@ function LOVELi.Color.parse(value) -- static
 			end
 			if #value == 8 then
 				-- #RRGGBBAA
-				red = tonumber(value:sub(1, 2), 16)
-				green = tonumber(value:sub(3, 4), 16)
-				blue = tonumber(value:sub(5, 6), 16)
-				alpha = tonumber(value:sub(7, 8), 16)
+				red = tonumber(value:sub(1, 2), 16) / 255
+				green = tonumber(value:sub(3, 4), 16) / 255
+				blue = tonumber(value:sub(5, 6), 16) / 255
+				alpha = tonumber(value:sub(7, 8), 16) / 255
 			end
 		else
 			local basecolor = LOVELi.Color.basecolors[value:lower()]
