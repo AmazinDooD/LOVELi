@@ -20,7 +20,21 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 -- SOFTWARE.
 
-LOVELi.Color = {}
+LOVELi.Color = {
+	basecolors = {
+		["red"] = { red = 1, green = 0, blue = 0, alpha = 1 },
+		["green"] = { red = 0, green = 1, blue = 0, alpha = 1 },
+		["blue"] = { red = 0, green = 0, blue = 1, alpha = 1 },
+		["cyan"] = { red = 0, green = 1, blue = 1, alpha = 1 },
+		["magenta"] = { red = 1, green = 0, blue = 1, alpha = 1 },
+		["yellow"] = { red = 1, green = 1, blue = 0, alpha = 1 },
+		["grey"] = { red = 0.5, green = 0.5, blue = 0.5, alpha = 1 },
+		["gray"] = { red = 0.5, green = 0.5, blue = 0.5, alpha = 1 },
+		["white"] = { red = 1, green = 1, blue = 1, alpha = 1 },
+		["black"] = { red = 0, green = 0, blue = 0, alpha = 1 },
+		["transparent"] = { red = 0, green = 0, blue = 0, alpha = 0 }
+	}
+}
 LOVELi.Color.__index = LOVELi.Color
 function LOVELi.Color:new(red, green, blue, alpha) -- LOVELi.Color LOVELi.Color:new(float red = 0, float green = 0, float blue = 0, float alpha = 1)
 	local o = { 
@@ -51,63 +65,44 @@ function LOVELi.Color:type()
 	return "Color"
 end
 function LOVELi.Color.parse(value) -- static
-	local red
-	local green
-	local blue
-	local alpha
+	local red = nil
+	local green = nil
+	local blue = nil
+	local alpha = nil
 	if type(value) == "number" then
 		red = (math.floor(value / 16777216) % 256) / 255
 		green = (math.floor(value / 65536) % 256) / 255
 		blue = (math.floor(value / 256) % 256) / 255 
 		alpha = (value % 256) / 255
 	elseif type(value) == "string" then
-		if value:sub(0,1) == "#" then
-			-- If the string has length 9, then it has an alpha component ("#rrggbbaa") as opposed to it having 7 length ("#rrggbb") 
-			local has_alpha = (#value == 9)
-			red, green, blue =
-				tonumber(value:sub(2, 3), 16),
-				tonumber(value:sub(4, 5), 16),
-				tonumber(value:sub(6, 7), 16)
-
-			if has_alpha then
-				alpha = tonumber(value:sub(8, 9), 16)
-			else
-				alpha = 1
+    if value:sub(1, 1) == "#" then
+		value = value:sub(2)
+			if #value == 3 then 
+				-- #RGB
+				value = value:sub(1, 1):rep(2) .. value:sub(2, 2):rep(2) .. value:sub(3, 3):rep(2) .. "FF"
+			elseif #value == 4 then 
+				-- #RGBA
+				value = value:sub(1, 1):rep(2) .. value:sub(2, 2):rep(2) .. value:sub(3, 3):rep(2) .. value:sub(4, 4):rep(2)
+			elseif #value == 6 then
+				-- #RRGGBB
+				value = value .. "FF"
+			end
+			if #value == 8 then
+				-- #RRGGBBAA
+				red = tonumber(value:sub(1, 2), 16)
+				green = tonumber(value:sub(3, 4), 16)
+				blue = tonumber(value:sub(5, 6), 16)
+				alpha = tonumber(value:sub(7, 8), 16)
 			end
 		else
-			-- Colour name parsing
-			local colors = {
-				red = {1,0,0},
-				green = {0,1,0},
-				blue = {0,0,1},
-				cyan = {0,1,1},
-				magenta = {1,0,1},
-				yellow = {1,1,0},
-				grey = {0.5,0.5,0.5},
-				gray = {0.5,0.5,0.5},
-				white = {1,1,1},
-				black = {0,0,0},
-				-- Some extra colours :)
-				cobaltblue = {0,0.3,0.7},
-				purple = {0.3,0,0.7},
-				orange = {0.7,0.3,0},
-				pink = {0.7,0,0.3},
-				mint = {0,0.7,0.3},
-				lime = {0.3,0.7,0},
-			}
-
-			-- Check if colour is in the above table
-			local rgba_table = colors[value] or {}
-
-			if next(rgba_table) ~= nil then
-				rgba_table[4] = rgba_table[4] or 1
-
-				red, green, blue, alpha = unpack(rgba_table)
-			else
-				-- If colour isn't valid, default to black
-				red, green, blue, alpha = 0,0,0,1
+			local basecolor = LOVELi.Color.basecolors[value:lower()]
+			if basecolor then 
+				red = basecolor.red
+				green = basecolor.green
+				blue = basecolor.blue
+				alpha = basecolor.alpha
 			end
-				
+		end
 	elseif type(value) == "table" then
 		red = value.red
 		green = value.green
