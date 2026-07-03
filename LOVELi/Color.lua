@@ -61,30 +61,59 @@ function LOVELi.Color.parse(value) -- static
 		blue = (math.floor(value / 256) % 256) / 255 
 		alpha = (value % 256) / 255
 	elseif type(value) == "string" then
-		if value == "red" then
-			red = 1
-		elseif value == "green" then
-			green = 1
-		elseif value == "blue" then
-			blue = 1
-		elseif value == "yellow" then
-			red = 1
-			green = 1
-		elseif value == "cyan" then
-			green = 1
-			blue = 1
-		elseif value == "magenta" then
-			red = 1
-			blue = 1
-		elseif value == "gray" then
-			red = 0.5
-			green = 0.5
-			alpha = 0.5
-		elseif value == "white" then
-			red = 1
-			green = 1
-			blue = 1
-		end
+		if value:sub(0,1) == "#" then
+			-- If the string has length 9, then it has an alpha component ("#rrggbbaa") as opposed to it having 7 length ("#rrggbb") 
+			local has_alpha = (#value == 9)
+			red, green, blue =
+				tonumber(value:sub(2, 3), 16),
+				tonumber(value:sub(4, 5), 16),
+				tonumber(value:sub(6, 7), 16)
+
+			if has_alpha then
+				alpha = tonumber(value:sub(8, 9), 16)
+			else
+				alpha = 1
+			end
+		else
+			-- Colour name parsing
+			local colors = {
+				red = {1,0,0},
+				green = {0,1,0},
+				blue = {0,0,1},
+				cyan = {0,1,1},
+				magenta = {1,0,1},
+				yellow = {1,1,0},
+				grey = {0.5,0.5,0.5},
+				gray = {0.5,0.5,0.5},
+				white = {1,1,1},
+				black = {0,0,0},
+				-- Some extra colours :)
+				cobaltblue = {0,0.3,0.7},
+				purple = {0.3,0,0.7},
+				orange = {0.7,0.3,0},
+				pink = {0.7,0,0.3},
+				mint = {0,0.7,0.3},
+				lime = {0.3,0.7,0},
+			}
+
+			-- Check if colour is in the above table
+			local valid = false
+			for k,_ in pairs(colors) do
+				if k == col_name then
+					valid = true
+					break
+				end
+			end
+
+			if valid then
+				local rgba_table = colors[col_name]
+				rgba_table[4] = rgba_table[4] or 1
+				red, green, blue, alpha = unpack(rgba_table)
+			else
+				-- If colour isn't valid, default to black
+				red, green, blue, alpha = 0,0,0,1
+			end
+				
 	elseif type(value) == "table" then
 		red = value.red
 		green = value.green
