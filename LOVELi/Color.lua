@@ -97,7 +97,7 @@ function LOVELi.Color.parse(value) -- static
 			}
 
 			-- Check if colour is in the above table
-			local rgba_table = colors[col_name] or {}
+			local rgba_table = colors[value] or {}
 
 			if next(rgba_table) ~= nil then
 				rgba_table[4] = rgba_table[4] or 1
