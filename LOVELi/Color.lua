@@ -97,17 +97,11 @@ function LOVELi.Color.parse(value) -- static
 			}
 
 			-- Check if colour is in the above table
-			local valid = false
-			for k,_ in pairs(colors) do
-				if k == col_name then
-					valid = true
-					break
-				end
-			end
+			local rgba_table = colors[col_name] or {}
 
-			if valid then
-				local rgba_table = colors[col_name]
+			if next(rgba_table) ~= nil then
 				rgba_table[4] = rgba_table[4] or 1
+
 				red, green, blue, alpha = unpack(rgba_table)
 			else
 				-- If colour isn't valid, default to black
