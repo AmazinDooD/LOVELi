@@ -20,7 +20,21 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 -- SOFTWARE.
 
-LOVELi.Color = {}
+LOVELi.Color = {
+	basecolors = {
+		["red"] = { red = 1, green = 0, blue = 0, alpha = 1 },
+		["green"] = { red = 0, green = 1, blue = 0, alpha = 1 },
+		["blue"] = { red = 0, green = 0, blue = 1, alpha = 1 },
+		["cyan"] = { red = 0, green = 1, blue = 1, alpha = 1 },
+		["magenta"] = { red = 1, green = 0, blue = 1, alpha = 1 },
+		["yellow"] = { red = 1, green = 1, blue = 0, alpha = 1 },
+		["grey"] = { red = 0.5, green = 0.5, blue = 0.5, alpha = 1 },
+		["gray"] = { red = 0.5, green = 0.5, blue = 0.5, alpha = 1 },
+		["white"] = { red = 1, green = 1, blue = 1, alpha = 1 },
+		["black"] = { red = 0, green = 0, blue = 0, alpha = 1 },
+		["transparent"] = { red = 0, green = 0, blue = 0, alpha = 0 }
+	}
+}
 LOVELi.Color.__index = LOVELi.Color
 function LOVELi.Color:new(red, green, blue, alpha) -- LOVELi.Color LOVELi.Color:new(float red = 0, float green = 0, float blue = 0, float alpha = 1)
 	local o = { 
@@ -51,39 +65,43 @@ function LOVELi.Color:type()
 	return "Color"
 end
 function LOVELi.Color.parse(value) -- static
-	local red
-	local green
-	local blue
-	local alpha
+	local red = nil
+	local green = nil
+	local blue = nil
+	local alpha = nil
 	if type(value) == "number" then
 		red = (math.floor(value / 16777216) % 256) / 255
 		green = (math.floor(value / 65536) % 256) / 255
 		blue = (math.floor(value / 256) % 256) / 255 
 		alpha = (value % 256) / 255
 	elseif type(value) == "string" then
-		if value == "red" then
-			red = 1
-		elseif value == "green" then
-			green = 1
-		elseif value == "blue" then
-			blue = 1
-		elseif value == "yellow" then
-			red = 1
-			green = 1
-		elseif value == "cyan" then
-			green = 1
-			blue = 1
-		elseif value == "magenta" then
-			red = 1
-			blue = 1
-		elseif value == "gray" then
-			red = 0.5
-			green = 0.5
-			alpha = 0.5
-		elseif value == "white" then
-			red = 1
-			green = 1
-			blue = 1
+    if value:sub(1, 1) == "#" then
+		value = value:sub(2)
+			if #value == 3 then 
+				-- #RGB
+				value = value:sub(1, 1):rep(2) .. value:sub(2, 2):rep(2) .. value:sub(3, 3):rep(2) .. "FF"
+			elseif #value == 4 then 
+				-- #RGBA
+				value = value:sub(1, 1):rep(2) .. value:sub(2, 2):rep(2) .. value:sub(3, 3):rep(2) .. value:sub(4, 4):rep(2)
+			elseif #value == 6 then
+				-- #RRGGBB
+				value = value .. "FF"
+			end
+			if #value == 8 then
+				-- #RRGGBBAA
+				red = tonumber(value:sub(1, 2), 16)
+				green = tonumber(value:sub(3, 4), 16)
+				blue = tonumber(value:sub(5, 6), 16)
+				alpha = tonumber(value:sub(7, 8), 16)
+			end
+		else
+			local basecolor = LOVELi.Color.basecolors[value:lower()]
+			if basecolor then 
+				red = basecolor.red
+				green = basecolor.green
+				blue = basecolor.blue
+				alpha = basecolor.alpha
+			end
 		end
 	elseif type(value) == "table" then
 		red = value.red
