@@ -422,7 +422,7 @@ function LOVELi.LayoutManager:mousereleased(x, y, button, istouch, presses)
 			if events then
 				for _, event in ipairs(events) do
 					if event.control == self.focusedcontrol then
-						event.callback(x, y, dx, dy, istouch)
+						event.callback(x, y, nil, nil, istouch)
 						break
 					end
 				end
