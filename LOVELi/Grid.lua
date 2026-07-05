@@ -402,14 +402,14 @@ function LOVELi.Grid:measureoverride(availablewidth, availableheight) -- overrid
 	if self:getwidth() == "auto" then
 		local desiredwidth = 0
 		for i = 1, #self.columns do
-			desiredwidth = desiredwidth + column:getdesiredwith()
+			desiredwidth = desiredwidth + self.columns[i]:getdesiredwith()
 		end	
 		self.desiredwidth = desiredwidth
 	end
 	if self:getheight() == "auto" then
 		local desiredheight = 0
 		for j = 1, #self.rows do
-			desiredheight = desiredheight + row:getdesiredheight()
+			desiredheight = desiredheight + self.rows[j]:getdesiredheight()
 		end
 		self.desiredheight = desiredheight
 	end
