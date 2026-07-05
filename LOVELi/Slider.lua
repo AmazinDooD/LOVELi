@@ -50,7 +50,7 @@ end
 function LOVELi.Slider:getminimum()
 	return self.minimum:getvalue()
 end
-function LOVELi.Slider:setminimum(set)
+function LOVELi.Slider:setminimum(value)
 	self.minimum:setvalue(value)
 end
 function LOVELi.Slider:getmaximum()
